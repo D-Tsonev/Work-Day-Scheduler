@@ -3,51 +3,68 @@ const descriptionEl = $('.description')
 const saveButtonEl = $('saveBtn')
 const hourSelector = $('.hour').text()
 const timeContainerEls = $('.row.time-block');
-console.log(timeContainerEls)
+const mainContainer = $('.container')
 
-console.log(hourSelector)
+let currentTime = dayjs()
 
-var hours = [];
+let currentTime24 = currentTime.format('HH');
 
-hours.push(hourSelector)
-
-console.log(hours);
 
 
 currentTime = dayjs().format('hA')
 
 
+
 dayjs.extend(window.dayjs_plugin_advancedFormat)
 
 
-const gradDate = dayjs().format('Do MMMM YYYY')
+const showDate = dayjs().format('Do MMMM YYYY')
+
+// console.log(currentTime12);
+
+
+// console.log(currentTime24Hour)
+
+for (let i = 9; i < 18; i++) {
+  const hour = dayjs().hour(i).format("hA");;
+  console.log(i);
+
+  let hourDiv = $("<div>").addClass('row time-block');
+  let hourText = $('<div>').addClass('col-md-1 hour').text(hour);
+  let description = $('<textarea>').addClass('col-md-10 description');
+  let saveButton = $('<button>').addClass('btn saveBtn col-md-1');
+  let faIcon = $('<span>').addClass('far fa-save fa-lg');
+  saveButton.append(faIcon);
+
+  if (i > currentTime24) {
+    hourDiv.addClass('future');
+    console.log('future');
+  } else if (i < currentTime24) {
+    hourDiv.addClass('past');
+    console.log('past');
+  } else {
+    console.log('present');
+    hourDiv.addClass('present');
+  }
+
+  mainContainer.append(hourDiv);
+  hourDiv.append(hourText);
+  hourDiv.append(description);
+  hourDiv.append(saveButton);
+}
+
+
+
+
+
+
+
 
 // Showing day, month and year in format  1st December 2023
-currentDayEl.text(gradDate)
+currentDayEl.text(showDate)
 
 
 
-
-
-
-function handleCurrentTime(hourSelector) {
-
-  console.log(`Current time: ${currentTime}`);
-  console.log(typeof currentTime)
-
-  if (hourSelector > currentTime ){
-    console.log ('future')
-    timeContainerEls.addClass('future')}
-  else if (hourSelector < currentTime ){
-    console.log ('past')
-    timeContainerEls.addClass('past')}
-  else {
-    console.log('present ')
-    timeContainerEls.addClass('present')
-  }
-  }
-
-handleCurrentTime(hours);
 
 
 

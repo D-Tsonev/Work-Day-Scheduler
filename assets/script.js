@@ -25,6 +25,7 @@ for (let i = 9; i < 18; i++) {
 
   let hourDiv = $("<div>").addClass('row time-block')
   let hourText = $('<div>').addClass('col-md-1 hour').text(hour)
+
   let description = $('<textarea>').addClass('col-md-10 description')
   let saveButton = $('<button>').addClass('btn saveBtn col-md-1')
   let faIcon = $('<span>').addClass('far fa-save fa-lg')
@@ -42,21 +43,25 @@ for (let i = 9; i < 18; i++) {
   hourDiv.append(hourText)
   hourDiv.append(description)
   hourDiv.append(saveButton)
+
 }
 
 
 function handleSaveButton(event) {
   event.preventDefault();
+
+  let existingTasks = {
+    task: $(this).siblings(".description").val().trim(),
+    hour: $(this).siblings(".hour").text()
+  }
   
-  let task = $(this).siblings(".description").val().trim();
-  let hour = $(this).siblings(".hour").text();
+  if (!existingTasks.task || !existingTasks.hour){
+    return
+  }
+
+  localStorage.setItem("tasks", JSON.stringify(existingTasks));
 
   console.log(task, hour)
-
-
-
-  // Add it to local storage
-
 }
 
 $('.saveBtn').on('click', handleSaveButton);
@@ -64,10 +69,3 @@ $('.saveBtn').on('click', handleSaveButton);
 })
 
 
-// function handleDelete (event){
-//   console.log(event)
-//   let deleteDescription = $(event.target)
-//   deleteDescription.empty()
-
-//   // remove it from localstore
-// }

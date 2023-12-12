@@ -1,71 +1,77 @@
+const currentDayEl = $("#currentDay");
+const mainContainer = $(".container");
+const tasks = getTasks();
 
-const currentDayEl = $('#currentDay')
-const mainContainer = $('.container')
+const currentTime = dayjs();
 
-$(document).ready(function () {
-let currentTime = dayjs()
+const currentTime24 = parseInt(currentTime.format("HH"));
 
-let currentTime24 = parseInt(currentTime.format('HH'))
-console.log(currentTime24)
 
-dayjs.extend(window.dayjs_plugin_advancedFormat)
-const showDate = dayjs().format('Do MMMM YYYY')
+dayjs.extend(window.dayjs_plugin_advancedFormat);
+
+const showDate = dayjs().format("Do MMMM YYYY");
 
 // Showing day, month and year in format  1st January 2023
-currentDayEl.text(showDate)
+currentDayEl.text(showDate);
 
-
-// Loop though hours from 9 to 17 
+// Loop though hours from 9 to 17
 for (let i = 9; i < 18; i++) {
-
-//  Current time in 12hour format 
-  const hour = dayjs().hour(i).format("hA")
+  //  Current time in 12hour format
+  const hour = dayjs().hour(i).format("hA");
 
   // Creating a dynamic HTML elements
 
-  let hourDiv = $("<div>").addClass('row time-block')
-  let hourText = $('<div>').addClass('col-md-1 hour').text(hour)
-
-  let description = $('<textarea>').addClass('col-md-10 description')
-  let saveButton = $('<button>').addClass('btn saveBtn col-md-1')
-  let faIcon = $('<span>').addClass('far fa-save fa-lg')
-  saveButton.append(faIcon)
+  let hourDiv = $("<div>").addClass("row time-block");
+  let hourText = $("<div>").addClass("col-md-1 hour").text(hour);
+  let description = $("<textarea>").addClass("col-md-10 description");
+  let saveButton = $("<button>").addClass("btn saveBtn col-md-1");
+  let faIcon = $("<span>").addClass("far fa-save fa-lg");
+  saveButton.append(faIcon);
 
   if (i > currentTime24) {
-    hourDiv.addClass('future')
+    hourDiv.addClass("future");
   } else if (i < currentTime24) {
-    hourDiv.addClass('past')
+    hourDiv.addClass("past");
   } else {
-    hourDiv.addClass('present')
+    hourDiv.addClass("present");
   }
-
-  mainContainer.append(hourDiv)
-  hourDiv.append(hourText)
-  hourDiv.append(description)
-  hourDiv.append(saveButton)
-
+// checking if they are existing tasks and showing them on the page
+  if (tasks[hour]) {
+    description.val(tasks[hour]);
+  }
+  mainContainer.append(hourDiv);
+  hourDiv.append(hourText);
+  hourDiv.append(description);
+  hourDiv.append(saveButton);
 }
-
 
 function handleSaveButton(event) {
   event.preventDefault();
 
+// existingTasks object stores task and hour
   let existingTasks = {
     task: $(this).siblings(".description").val().trim(),
-    hour: $(this).siblings(".hour").text()
-  }
-  
-  if (!existingTasks.task || !existingTasks.hour){
-    return
+    hour: $(this).siblings(".hour").text(),
+  };
+
+  if (!existingTasks.task || !existingTasks.hour) {
+    return;
   }
 
-  localStorage.setItem("tasks", JSON.stringify(existingTasks));
+  tasks[existingTasks.hour] = existingTasks.task;
 
-  console.log(task, hour)
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+
+  console.log(tasks);
 }
 
-$('.saveBtn').on('click', handleSaveButton);
+$(".saveBtn").on("click", handleSaveButton);
 
-})
-
-
+// retrieve the tasks from the local storage
+function getTasks() {
+  if ("tasks" in localStorage) {
+    return JSON.parse(localStorage.getItem("tasks"));
+  } else {
+    return {};
+  }
+}

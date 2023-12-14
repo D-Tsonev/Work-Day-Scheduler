@@ -1,14 +1,10 @@
 const currentDayEl = $("#currentDay");
 const mainContainer = $(".container");
-const tasks = getTasks();
 
 const currentTime = dayjs();
-
 const currentTime24 = parseInt(currentTime.format("HH"));
 
-
 dayjs.extend(window.dayjs_plugin_advancedFormat);
-
 const showDate = dayjs().format("Do MMMM YYYY");
 
 // Showing day, month and year in format  1st January 2023
@@ -23,6 +19,7 @@ for (let i = 9; i < 18; i++) {
 
   let hourDiv = $("<div>").addClass("row time-block");
   let hourText = $("<div>").addClass("col-md-1 hour").text(hour);
+
   let description = $("<textarea>").addClass("col-md-10 description");
   let saveButton = $("<button>").addClass("btn saveBtn col-md-1");
   let faIcon = $("<span>").addClass("far fa-save fa-lg");
@@ -35,10 +32,13 @@ for (let i = 9; i < 18; i++) {
   } else {
     hourDiv.addClass("present");
   }
+
 // checking if they are existing tasks and showing them on the page
-  if (tasks[hour]) {
-    description.val(tasks[hour]);
+  const storedTask = JSON.parse(localStorage.getItem(`taskStored${hour}`));
+  if (storedTask) {
+    description.val(storedTask);
   }
+
   mainContainer.append(hourDiv);
   hourDiv.append(hourText);
   hourDiv.append(description);
@@ -46,32 +46,11 @@ for (let i = 9; i < 18; i++) {
 }
 
 function handleSaveButton(event) {
-  event.preventDefault();
-
-// existingTasks object stores task and hour
-  let existingTasks = {
-    task: $(this).siblings(".description").val().trim(),
-    hour: $(this).siblings(".hour").text(),
-  };
-
-  if (!existingTasks.task || !existingTasks.hour) {
-    return;
-  }
-
-  tasks[existingTasks.hour] = existingTasks.task;
-
-  localStorage.setItem("tasks", JSON.stringify(tasks));
-
-  console.log(tasks);
+  event.preventDefault(); 
+    task= $(this).siblings(".description").val().trim(),
+    hour= $(this).siblings(".hour").text(),
+  
+  localStorage.setItem(`taskStored${hour}`, JSON.stringify(task))
 }
 
 $(".saveBtn").on("click", handleSaveButton);
-
-// retrieve the tasks from the local storage
-function getTasks() {
-  if ("tasks" in localStorage) {
-    return JSON.parse(localStorage.getItem("tasks"));
-  } else {
-    return {};
-  }
-}
